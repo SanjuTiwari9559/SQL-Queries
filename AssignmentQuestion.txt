@@ -1,7 +1,7 @@
 Assignment Question -->
--- Write a program that computes the perimeter and the area of a rectangle. Define 
---your own values for the length and width. (Assuming that L and W are the length 
---and width of the rectangle, Perimeter = 2*(L+W) and Area = L*W
+// Write a program that computes the perimeter and the area of a rectangle. Define 
+//your own values for the length and width. (Assuming that L and W are the length 
+//and width of the rectangle, Perimeter = 2*(L+W) and Area = L*W
 Use PRACTICE_SP;
 CREATE TABLE RECT(
 LEN FLOAT ,
@@ -24,8 +24,8 @@ EXECUTE RECT_CAL 10,20;
 SELECT * FROM RECT;
 SHOW CREATE PROCEDURE RECT_CAL
 
--- Convert a temperature in Fahrenheit (F) to its equivalent in Celsius (C) and vice 
---versa. The required formulae are:- C= (F-32)*5/9 
+//Convert a temperature in Fahrenheit (F) to its equivalent in Celsius (C) and vice 
+//versa. The required formulae are:- C= (F-32)*5/9 
 --F= 9/5*C + 32 
 Complex queries Practice
 CREATE DATABASE MANAGEMENT
@@ -73,3 +73,155 @@ FROM DEPT D
 JOIN EMPLOYEE E ON D.DEPT_ID = E.DEPT_ID
 GROUP BY D.DEPT_NAME, E.DEPT_ID
 HAVING COUNT(E.DEPT_ID) > 2;
+
+use MANAGEMENT;
+//Write the SQL Querry for that dept name ,dept id and Salary which have more than 75000
+
+SELECT * FROM EMPLOYEE;
+SELECT AVG(E.SALARY),D.DEPT_ID ,D.DEPT_NAME
+FROM EMPLOYEE E JOIN DEPT D
+ON E.DEPT_ID=D.DEPT_ID
+GROUP BY D.DEPT_ID,D.DEPT_NAME
+HAVING  AVG(SALARY)>75000;
+select * from Manager
+select * from EMPLOYEE
+//Write the sql Queries Name of the Manager and Employee  and City Name who Belong to same City 
+
+SELECT E.EMP_NAME ,M.MANAGER_NAME FROM 
+EMPLOYEE E JOIN MANAGER M 
+ON E.MANAGER_ID=M.MANAGER_ID
+WHERE E.CITY=M.CITY
+--Write the sql Querry To find the Employee Name and Manager Name along with Department which Salary is Exist between 35000 to 90000
+SELECT E.EMP_NAME ,M.MANAGER_NAME ,D.DEPT_NAME 
+FROM EMPLOYEE E JOIN 
+DEPT D 
+ON E.DEPT_ID=D.DEPT_ID
+JOIN MANAGER M 
+ON E.MANAGER_ID=M.MANAGER_ID
+WHERE E.SALARY BETWEEN 35000 AND 90000
+
+//Write the Sql Querry to find the Department wise max Salary along with Employee Name and Manager Name 
+
+WITH MaxSalaryByDept AS (
+    SELECT DEPT_ID, MAX(SALARY) AS MAX_SALARY
+    FROM EMPLOYEE
+    GROUP BY DEPT_ID
+)
+SELECT E.EMP_NAME, E.SALARY, D.DEPT_NAME, M.MANAGER_NAME
+FROM EMPLOYEE E 
+JOIN DEPT D ON E.DEPT_ID = D.DEPT_ID
+JOIN MANAGER M ON E.MANAGER_ID = M.MANAGER_ID
+JOIN MaxSalaryByDept MS ON E.DEPT_ID = MS.DEPT_ID AND E.SALARY = MS.MAX_SALARY;
+
+//Decision making Statement 
+//IF Else 
+
+GO
+CREATE PROCEDURE PROCEDURE_NAME
+AS
+BEGIN
+    DECLARE @X INT;
+
+    -- Assign the salary of 'Sanjay' to the variable @X
+    SELECT @X = SALARY FROM EMPLOYEE WHERE EMP_NAME = 'Sanjay';
+
+    -- First condition check
+    IF @X > 10000
+    BEGIN
+        INSERT INTO TEMP (ID, VALUE) VALUES (1, @X);
+    END
+    -- Second condition check
+    ELSE IF @X > 5000
+    BEGIN
+        INSERT INTO TEMP (ID, VALUE) VALUES (2, @X);
+    END
+    -- Third condition check
+    ELSE IF @X > 2000
+    BEGIN
+        INSERT INTO TEMP (ID, VALUE) VALUES (3, @X);
+    END
+    -- Default case if none of the above conditions are met
+    ELSE
+    BEGIN
+        INSERT INTO TEMP (ID, VALUE) VALUES (4, @X);
+    END
+END;
+GO
+
+//We can Write This By using Case Statement
+GO
+CREATE PROCEDURE PROCEDURE_NAME
+AS
+BEGIN
+    DECLARE @X INT;
+    DECLARE @ID INT;
+    DECLARE @VALUE INT;
+
+    -- Assign the salary of 'Sanjay' to the variable @X
+    SELECT @X = SALARY FROM EMPLOYEE WHERE EMP_NAME = 'Sanjay';
+
+    -- Use CASE to determine the ID and VALUE to insert
+    SELECT @ID = 
+        CASE 
+            WHEN @X > 10000 THEN 1
+            WHEN @X > 5000 THEN 2
+            WHEN @X > 2000 THEN 3
+            ELSE 4
+        END,
+        @VALUE = 
+        CASE 
+            WHEN @X > 10000 THEN @X
+            WHEN @X > 5000 THEN @X
+            WHEN @X > 2000 THEN @X
+            ELSE @X
+        END;
+
+    -- Insert the determined ID and VALUE into the TEMP table
+    INSERT INTO TEMP (ID, VALUE) VALUES (@ID, @VALUE);
+END;
+GO
+
+//While Loop
+CREATE PROCEDURE WhileLoopDemo
+AS
+BEGIN
+    DECLARE @Counter INT;
+    SET @Counter = 1;
+
+    WHILE @Counter <= 10
+    BEGIN
+        PRINT 'Counter value: ' + CAST(@Counter AS VARCHAR(10));
+        SET @Counter = @Counter + 1;
+    END
+END;
+GO
+
+/Block With in Block
+CREATE PROCEDURE OuterProcedure
+AS
+BEGIN
+    DECLARE @var1 INT;
+    SET @var1 = 10;
+    
+    -- Outer block
+    BEGIN
+        DECLARE @var2 VARCHAR(50);
+        SET @var2 = 'Hello';
+        
+        -- Inner block
+        BEGIN
+            DECLARE @var3 DATE;
+            SET @var3 = GETDATE();
+            
+            -- Display values from inner block
+            SELECT @var1 AS OuterVar1, @var2 AS MiddleVar2, @var3 AS InnerVar3;
+        END; -- End of inner block
+    END; -- End of outer block
+    
+    -- Display values from outer block
+    SELECT @var1 AS OuterVar1;
+END;
+GO
+
+
+

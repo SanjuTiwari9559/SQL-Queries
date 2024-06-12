@@ -1,0 +1,50 @@
+use PRACTICE_SP;
+//Writing the Function WithOut Parameter
+CREATE FUNCTION SHOWMESSAGE()
+RETURNS VARCHAR(40)
+AS
+BEGIN
+    RETURN 'Welcome to Nimap Word'
+END;
+//I want to call that function then 
+SELECT dbo.SHOWMESSAGE();
+//Write the Function with Paarameter
+CREATE FUNCTION sQUREnUMBER(@A as INT)
+RETURNS INT 
+AS
+BEGIN
+RETURN (@A*@A)
+END;
+//How to call this
+SELECT Dbo.sQUREnUMBER(5);
+--In Function I use Input parameter not output parameter but in the care of Stored Procedure We Use Both Input and Output
+
+//How to Alter Function
+ALTER FUNCTION sQUREnUMBER(@A as INT)
+RETURNS INT 
+AS
+BEGIN
+RETURN (@A*@A*@A)
+END;
+SELECT Dbo.sQUREnUMBER(5);
+--HOW TO Drop 
+DROP FUNCTION Dbo.sQUREnUMBER;
+
+//Write the Function for Showing Message That Voter is Eligible for voting or not Eligible for Voting
+CREATE FUNCTION check_Voter_Age( @age AS INT)
+RETURNS VARCHAR(40)
+AS
+BEGIN 
+DECLARE @MESSAGE VARCHAR(40)
+IF @age>18 
+BEGIN
+SET @MESSAGE='Dear You Are Eligible for Voting'
+END
+ELSE
+BEGIN
+SET @MESSAGE='Dear You are Not Eligible for Voting'
+END
+RETURN @MESSAGE
+END;
+SELECT Dbo.check_Voter_Age(20);
+//A function can Call  ANOTHER Function 

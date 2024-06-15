@@ -1,0 +1,32 @@
+Step 1- First Go To GitLab then sign up then Login
+Step 2-Create Remote Repo (Set as Public)
+step 3-Create Local Folder 
+step 4-Then Provide git init ( after that It show .git folder)
+Step 5-After That Run This Command git config --global user.name "Sanjay1-Tiwari"(This is your git UserName)
+step 6- After That U set This   git config --global user.email "you@example.com"(Provide that Email id which u have already provided for creating Git Lab Account)
+step7-If U want to know that is this username ,Email id is Added or not so U can see By running  this Command
+       git config --global --list
+Step 8- if U want to Show Your Git Status then u Can Run this Command  git config --global --list
+
+step 9- After That if U want to add Local Folder files in this Remote Then U can run THIS Command 
+         git add .(It will Add all file that are Present in that Folder) 
+        if U want To special File then U Add By Writing this Command  git add (File Name)
+Step 10-After That U add You Remote Repo Type this Command  git remote add origin https://gitlab.com/kihgfdxdxx/cicd-project.git(Be Careful I have Spend 5 Hour in this So U need to Careful )
+Step 11-If U want to  Know Is This Added Or Not Then Run This Command
+     git remote -v
+Step 12- Which File U have Added Then If U want to Commit then  write This Command 
+       git commit -m "This this is Third"
+     if U Write This Command Then First  go to the Login Part provide User Name and Password 
+
+Note-- If U have Provide Wrong Remote Link And U want to Add New Link So u follow this Process
+    1. $ git remote set-url origin https://gitlab.com/kihgfdxdxx/mythirdrepo.git
+    After That Then see Is This Valid or Not After That 
+Then Push Again  
+
+ 
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+--CURSOR --> IT IS TEMP TABLE 
+--IT IS USED FOR ROW by Row
+-- It is used for DML operation for performing the operation 
+--It is used for the  store table 
+--Type of the cursor 1.Implicit cursor 2.Explicit  cursor 
+--Implicit cursor---> These cursor is known as default  cursor.When I perform crud operation Then automatically 
+ --create Implicit cursor
+ --Explicit  cursor --> This cursor is created by user when he want to get row by row  
+
+ ------------------------------------------------------
+ --METHORD OF CURSOR
+ -------------------------------------------------------
+ --NEXT
+ --Prior
+ --First 
+ --last 
+ --Absolute n 
+ --Relative n 
+--There are different steps for creating cursor 
+--1.Declearing cursor 
+--2.Opening cursor 
+--3.Feaching cursor 
+--4.Closing cursor 
+--5.deallocation cursor
+--WE can implement cursor by two way 
+--1.with cursor variable 
+--2.Without cursor variable 
+------------------------------------------------------------------------------------------------------
+                       --Without cursor variable 
+-------------------------------------------------------------------------------------------------------
+--use BlogPost
+--declare  myCursor cursor scroll for select * from BlogPost
+--open  myCursor
+--fetch first from myCursor
+--fetch next from myCursor
+--fetch prior from myCursor
+--fetch last from myCursor
+
+--fetch absolute 4 from myCursor
+--fetch relative 3 from myCursor
+--close myCursor
+--deallocate myCursor
+
+----------------------------------------------------------------------------------------------------------------------------
+                  
+				  --With cursor variable 
+
+--------------------------------------------------------------------------------------------------------------------------
+--declare  myCursor cursor scroll for select PostId ,PostName,PostContent from BlogPost
+--declare  @PostId int ,@PostName varchar(50),@PostContent varchar(60);
+--open  myCursor
+--fetch first from myCursor into  @PostId,@PostName,@PostContent
+--print cast(@PostId as varchar(50))+''+@PostName +@PostContent
+--fetch next from myCursor  into  @PostId,@PostName,@PostContent
+--print cast(@PostId as varchar(50))+''+@PostName +@PostContent
+--fetch prior from myCursor into  @PostId,@PostName,@PostContent
+--print cast(@PostId as varchar(50))+''+@PostName +@PostContent
+--fetch last from myCursor  into  @PostId,@PostName,@PostContent
+--print cast(@PostId as varchar(50))+''+@PostName +@PostContent
+
+--fetch absolute 4 from myCursor into  @PostId,@PostName,@PostContent
+--print cast(@PostId as varchar(50))+''+@PostName +@PostContent
+--fetch relative 3 from myCursor into  @PostId,@PostName,@PostContent
+--print cast(@PostId as varchar(50))+''+@PostName +@PostContent
+--close myCursor
+--deallocate myCursor

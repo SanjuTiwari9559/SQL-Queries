@@ -1,0 +1,78 @@
+--create Database Cte_Practice;
+use Cte_Practice;
+create Table Employees(
+EID INT,
+ENAME VARCHAR(50),
+DEPT INT ,
+SLEVEL INT 
+);
+CREATE TABLE Departments(
+DID INT ,
+DNAME VARCHAR(50)
+);
+CREATE TABLE PROJECT(
+PID INT,
+PNAME VARCHAR(50),
+EID INT
+);
+
+
+--WITH SeniorEmployees AS (
+--    SELECT 
+--        EID, 
+--        EName, 
+--        DEPT
+--    FROM 
+--        Employees
+--    WHERE 
+--        SLevel = 3
+--), 
+--EmployeeDepartments AS (
+--    SELECT 
+--        e.EID, 
+--        e.EName, 
+--        d.DName -- Assuming Departments table has a DName column for department name
+--    FROM 
+--        SeniorEmployees e
+--    JOIN 
+--        Departments d ON e.DEPT = d.DID
+--)
+--SELECT 
+--    *
+--FROM 
+--    EmployeeDepartments;
+WITH SeniorEmployees AS (
+    SELECT 
+        EID, 
+        EName, 
+        DEPT
+    FROM 
+        Employees
+    WHERE 
+        SLevel = 3
+), 
+EmployeeDepartments AS (
+    SELECT 
+        e.EID, 
+        e.EName, 
+        d.DName
+    FROM 
+        SeniorEmployees e
+    JOIN 
+        Departments d ON e.DEPT = d.DID
+),
+SeniorEmployeeProjects AS (
+    SELECT 
+        ed.EID, 
+        ed.EName, 
+        ed.DName, 
+        p.PName
+    FROM 
+        EmployeeDepartments ed
+    JOIN 
+        PROJECT p ON ed.EID = p.EID
+)
+SELECT 
+    *
+FROM 
+    SeniorEmployeeProjects;

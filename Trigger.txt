@@ -1,0 +1,169 @@
+use PlutoDb;
+
+--CREATE TABLE Employee (
+--    Emp_Id INT PRIMARY KEY,
+--    Emp_Name NVARCHAR(100),
+--    Emp_Salary DECIMAL(10, 2),
+--    Emp_Dob DATE,
+--    Emp_Experience INT,
+--    Record_DateTime DATETIME
+--);
+---------------------------------------------------------------------------------------------------------------------------------------------------
+--                                        Create Trigger For Validation
+-----------------------------------------------------------------------------------------------------------------------------------------------
+--CREATE TRIGGER [DBO].[TRG_AFTER_INSERT]
+--ON [DBO].[Employee]
+--AFTER INSERT
+--AS
+--BEGIN
+--    SET NOCOUNT ON;
+
+--    DECLARE @CurrentYear INT = YEAR(GETDATE());
+--    DECLARE @Age INT;
+
+--    -- Check conditions and print messages
+--    IF EXISTS (
+--        SELECT 1
+--        FROM inserted
+--        WHERE
+--            (@CurrentYear - YEAR(Emp_Dob)) > 25
+--            AND Emp_Experience < 5
+--    )
+--    BEGIN
+--        PRINT 'Age is greater than 25 and experience is less than 5 years';
+--        ROLLBACK;
+--        RETURN;
+--    END
+--    ELSE
+--    BEGIN
+--        PRINT 'Insertion successful';
+--    END
+--END;
+
+--CREATE TABLE EmpHistory (
+--    HistoryID INT IDENTITY(1,1) PRIMARY KEY,
+--    Emp_Id INT,
+--    Field_Name NVARCHAR(100),
+--    Old_Value NVARCHAR(100),
+--    New_Value NVARCHAR(100),
+--    Record_DateTime DATETIME
+--);
+--------------------------------------------------------------------------------------------------------------------------------------------------
+                                          --Create Update Trigger
+---------------------------------------------------------------------------------------------------------------------------------------------------
+--CREATE TRIGGER [DBO].[TRG_AFTER_UPDATE]
+--ON [DBO].[Employee]
+--AFTER UPDATE
+--AS
+--BEGIN
+--    SET NOCOUNT ON;
+
+--    -- Log changes for Emp_Name
+--    IF UPDATE(Emp_Name)
+--    BEGIN
+--        INSERT INTO EmpHistory (Emp_Id, Field_Name, Old_Value, New_Value, Record_DateTime)
+--        SELECT d.Emp_Id, 'Emp_Name', d.Emp_Name, i.Emp_Name, GETDATE()
+--        FROM inserted i
+--        JOIN deleted d ON i.Emp_Id = d.Emp_Id;
+--    END
+
+--    -- Log changes for Emp_Salary
+--    IF UPDATE(Emp_Salary)
+--    BEGIN
+--        INSERT INTO EmpHistory (Emp_Id, Field_Name, Old_Value, New_Value, Record_DateTime)
+--        SELECT d.Emp_Id, 'Emp_Salary', d.Emp_Salary, i.Emp_Salary, GETDATE()
+--        FROM inserted i
+--        JOIN deleted d ON i.Emp_Id = d.Emp_Id;
+--    END
+--END;
+--Delete Trigger
+--CREATE TRIGGER [DBO].[TRG_AFTER_DELETE]
+--ON [DBO].[Employee]
+--AFTER DELETE
+--AS
+--BEGIN
+--    SET NOCOUNT ON;
+
+--    INSERT INTO EmpHistory (Emp_Id, Field_Name, Old_Value, New_Value, Record_DateTime)
+--    SELECT d.Emp_Id, 'DELETED_RECORD', 
+--           CONCAT('Name:', d.Emp_Name, ', Salary:', d.Emp_Salary, ', DOB:', d.Emp_Dob, ', Experience:', d.Emp_Experience), 
+--           NULL, GETDATE()
+--    FROM deleted d;
+--END;
+---- Insert initial data
+--INSERT INTO Employee (Emp_Id, Emp_Name, Emp_Salary, Emp_Dob, Emp_Experience, Record_DateTime)
+--VALUES (1, 'John Doe', 50000.00, '1990-01-01', 5, GETDATE());
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+----                              Delete data to trigger the logging
+------------------------------------------------------------------------------------------------------------------------------------------------------
+--DELETE FROM Employee
+--WHERE Emp_Id = 1;
+
+---- Check the EmpHistory table for logged changes
+--SELECT * FROM EmpHistory;
+--CREATE TRIGGER [DBO].[TRG_INSTEAD_OF_DML]
+--ON [DBO].[Employee]
+--INSTEAD OF INSERT, UPDATE, DELETE
+--AS
+--BEGIN
+--    SET NOCOUNT ON;
+
+--    -- Handle Insert Operation
+--    IF EXISTS (SELECT * FROM inserted) AND NOT EXISTS (SELECT * FROM deleted)
+--    BEGIN
+--        INSERT INTO Employee (Emp_Id, Emp_Name, Emp_Salary, Emp_Dob, Emp_Experience, Record_DateTime)
+--        SELECT Emp_Id, Emp_Name, Emp_Salary, Emp_Dob, Emp_Experience, Record_DateTime
+--        FROM inserted;
+
+--        INSERT INTO EmpHistory (Emp_Id, Field_Name, Old_Value, New_Value, Record_DateTime)
+--        SELECT i.Emp_Id, 'NEW_RECORD', NULL, 
+--               CONCAT('Name:', i.Emp_Name, ', Salary:', i.Emp_Salary, ', DOB:', i.Emp_Dob, ', Experience:', i.Emp_Experience), 
+--               GETDATE()
+--        FROM inserted i;
+--    END
+
+--    -- Handle Update Operation
+--    IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
+--    BEGIN
+--        -- Log changes for Emp_Name
+--        IF UPDATE(Emp_Name)
+--        BEGIN
+--            INSERT INTO EmpHistory (Emp_Id, Field_Name, Old_Value, New_Value, Record_DateTime)
+--            SELECT d.Emp_Id, 'Emp_Name', d.Emp_Name, i.Emp_Name, GETDATE()
+--            FROM inserted i
+--            JOIN deleted d ON i.Emp_Id = d.Emp_Id;
+--        END
+
+--        -- Log changes for Emp_Salary
+--        IF UPDATE(Emp_Salary)
+--        BEGIN
+--            INSERT INTO EmpHistory (Emp_Id, Field_Name, Old_Value, New_Value, Record_DateTime)
+--            SELECT d.Emp_Id, 'Emp_Salary', d.Emp_Salary, i.Emp_Salary, GETDATE()
+--            FROM inserted i
+--            JOIN deleted d ON i.Emp_Id = d.Emp_Id;
+--        END
+
+--        UPDATE Employee
+--        SET Emp_Name = i.Emp_Name, Emp_Salary = i.Emp_Salary, Emp_Dob = i.Emp_Dob, 
+--            Emp_Experience = i.Emp_Experience, Record_DateTime = i.Record_DateTime
+--        FROM inserted i
+--        WHERE Employee.Emp_Id = i.Emp_Id;
+--    END
+
+--    -- Handle Delete Operation
+--    IF NOT EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
+--    BEGIN
+--        INSERT INTO EmpHistory (Emp_Id, Field_Name, Old_Value, New_Value, Record_DateTime)
+--        SELECT d.Emp_Id, 'DELETED_RECORD', 
+--               CONCAT('Name:', d.Emp_Name, ', Salary:', d.Emp_Salary, ', DOB:', d.Emp_Dob, ', Experience:', d.Emp_Experience), 
+--               NULL, GETDATE()
+--        FROM deleted d;
+
+--        DELETE FROM Employee
+--        WHERE Emp_Id IN (SELECT Emp_Id FROM deleted);
+--    END
+--END;
+
+
+
+

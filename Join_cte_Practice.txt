@@ -1,0 +1,119 @@
+-----------------------------------------------------------------------------------------------------------------------
+             --Get the details of the book that has generated the highest total sales.
+------------------------------------------------------------------------------------------------------------------------
+--Select  b.Tittle,b.PublishDate,b.Page,
+--a.FirstName +' '+a.LastName as AuthorName,
+--sum(o.TotalPrice) as Sum_Salary
+--from 
+--Book b
+--join 
+--Authors a
+--on a.AuthorID=b.AuthorID
+--join 
+--Orders o
+--on o.BookID=b.ID
+--Group By
+--b.Tittle,b.PublishDate,b.Page,a.FirstName,a.LastName 
+--Having sum(o.TotalPrice)=
+--(Select MAX(TotalSales)
+--from 
+--(Select Sum(o1.TotalPrice) as TotalSales
+--from Orders o1
+----join 
+----Orders o1
+----on o1.BookID=b1.ID
+--Group By o1.BookID
+--) as Subquery)
+
+--select b.Tittle as BookTittle 
+--,b.PublishDate, b.Page ,
+--a.FirstName +' '+a.LastName as AuthorName ,
+--sum(o.TotalPrice) as Max_SumSalary
+--from Book b 
+--join Authors a
+--on a.AuthorID=b.AuthorID
+--join Orders o
+--on o.BookId=b.Id
+--group By b.Tittle,b.PublishDate,b.Page,
+--a.FirstName,a.LastName 
+--Having sum(o.TotalPrice)=(
+--Select max(TotalSumOfEachBook)
+--from 
+--(Select Sum(o1.TotalPrice) as TotalSumOfEachBook
+--from Orders o1
+--group By
+--o1.BookID
+--) SubQuery
+--)
+
+
+
+
+
+
+SELECT * FROM Book;
+SELECT * FROM Authors;
+
+SELECT * FROM Orders;
+------------------------------------------------------------------------------------------------------------------------
+--By Using CTE 
+-----------------------------------------------------------------------------------------------------------------------
+--with BookSales as
+--(Select b.Tittle as BookName ,
+--a.FirstName +''+a.LastName as AuthorName,
+--b.Page as TotalPage,
+--sum(o.TotalPrice) as BookByPrice
+--from 
+--Book b
+--join 
+--Authors a
+--on a.AuthorID=b.AuthorID
+--join 
+--Orders o
+--on o.BookID=b.ID
+--Group By b.Tittle,a.FirstName,a.LastName ,b.Page
+--)
+
+--Select  bs.BookName ,bs.AuthorName, bs.TotalPage,bs.BookByPrice
+--from BookSales bs
+--where bs.BookByPrice=(Select max(BookByPrice) from BookSales)
+---------------------------------------------------------------------------------------------------------------
+        --Find authors who have written more than 5 books.
+------------------------------------------------------------------------------------------------------------------
+--WITH AuthorDetailsAndCount AS (
+--    SELECT 
+--        a.FirstName + ' ' + a.LastName AS AuthorName,
+--        a.Country AS CountryName,
+--        COUNT(b.AuthorID) AS NumberOfBooks
+--    FROM 
+--        Authors a
+--    JOIN 
+--        Book b ON b.AuthorID = a.AuthorID
+--    GROUP BY
+--        a.AuthorID, a.FirstName, a.LastName, a.Country
+--)
+--SELECT 
+--    AuthorName,
+--    CountryName,
+--    NumberOfBooks
+--FROM 
+--    AuthorDetailsAndCount
+--WHERE 
+--    NumberOfBooks = (SELECT MAX(NumberOfBooks) FROM AuthorDetailsAndCount);
+
+--	Get the average number of pages of books written by each author.
+
+--sql
+--Copy code
+--SELECT 
+--    a.FirstName + ' ' + a.LastName AS AuthorName, 
+--    AVG(b.Pages) AS AveragePages
+--FROM 
+--    Authors a
+--JOIN 
+--    Books b ON a.AuthorID = b.AuthorID
+--GROUP BY 
+--    a.FirstName, a.LastName;
+
+
+ 
